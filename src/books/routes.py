@@ -4,5 +4,5 @@ book_router = APIRouter()
 
 
 @book_router.get("/")
-def get_books():
+async def get_books():
     return {"Hello": "World"}

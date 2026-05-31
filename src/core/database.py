@@ -2,8 +2,10 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel import SQLModel
 from src.core.config import Config
 
+import src.books.models
+
 engine = create_async_engine(
-    url=Config.DB_URI,
+    url=Config.DATABASE_URL,
     echo=True,
     pool_pre_ping=True,
 )

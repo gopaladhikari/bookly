@@ -20,7 +20,7 @@ class Book(SQLModel, table=True):
     author: str
     description: str
     publisher: str
-    published_date: str
+    published_date: datetime
     page_count: int
     language: str
 
@@ -32,7 +32,7 @@ class Book(SQLModel, table=True):
         sa_column=Column(
             pg.TIMESTAMP(timezone=True),
             default=now,
-            onupdate=func.now(),
+            onupdate=func.now,
             nullable=False,
         )
     )
