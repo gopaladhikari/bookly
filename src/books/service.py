@@ -11,7 +11,7 @@ class BookService:
 
         books = await session.exec(statement)
 
-        return books if books is not None else None
+        return books.all()
 
     async def get_book(self, book_id: UUID, session: AsyncSession):
         statement = select(Book).where(Book.id == book_id)

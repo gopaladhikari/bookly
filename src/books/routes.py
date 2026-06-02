@@ -15,12 +15,19 @@ book_service = BookService()
 @book_router.get("/", response_model=List[Book])
 async def get_books(session: AsyncSession = Depends(get_session)):
     books = await book_service.get_books(session)
+
     return books
 
 
 @book_router.get("/{book_id}", status_code=status.HTTP_200_OK, response_model=Book)
 async def get_book(book_id: UUID, session: AsyncSession = Depends(get_session)):
     book = await book_service.get_book(book_id, session)
+
+    if book is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
+        )
+
     return book
 
 
@@ -37,10 +44,22 @@ async def update_book(
     book_id: UUID, book: UpdateBookSchema, session: AsyncSession = Depends(get_session)
 ):
     updated_book = await book_service.update_book(book_id, book, session)
+
+    if updated_book is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
+        )
+
     return updated_book
 
 
 @book_router.delete("/{book_id}", status_code=status.HTTP_200_OK, response_model=Book)
 async def delete_book(book_id: UUID, session: AsyncSession = Depends(get_session)):
     deleted_book = await book_service.delete_book(book_id, session)
+
+    if deleted_book is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book not found"
+        )
+
     return deleted_book
