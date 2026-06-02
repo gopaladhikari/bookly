@@ -1,22 +1,23 @@
 from pydantic import BaseModel
-from uuid import UUID
+from typing import Optional
 from datetime import datetime
 
 
-class BookCreate(BaseModel):
+class CreateBookSchema(BaseModel):
     title: str
     author: str
     description: str
     publisher: str
-    published_date: str
+    published_date: datetime
     page_count: int
     language: str
-    created_at: datetime
-    updated_at: datetime
 
 
-class BookWithId(
-    BookCreate,
-    BaseModel,
-):
-    id: UUID
+class UpdateBookSchema(BaseModel):
+    title: Optional[str] = None
+    author: Optional[str] = None
+    description: Optional[str] = None
+    publisher: Optional[str] = None
+    published_date: Optional[datetime] = None
+    page_count: Optional[int] = None
+    language: Optional[str] = None

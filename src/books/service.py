@@ -1,5 +1,5 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
-from .schema import BookWithId, BookCreate
+from .schema import CreateBookSchema, UpdateBookSchema
 from uuid import UUID
 from sqlmodel import select, desc
 from .models import Book
@@ -11,7 +11,7 @@ class BookService:
 
         books = await session.exec(statement)
 
-        return books.all()
+        return books if books is not None else None
 
     async def get_book(self, book_id: UUID, session: AsyncSession):
         statement = select(Book).where(Book.id == book_id)
@@ -25,7 +25,7 @@ class BookService:
 
         return first_book
 
-    async def create_book(self, book: BookCreate, session: AsyncSession):
+    async def create_book(self, book: CreateBookSchema, session: AsyncSession):
         data = book.model_dump()
 
         new_book = Book(**data)
@@ -38,13 +38,15 @@ class BookService:
 
         return new_book
 
-    async def update_book(self, book: BookWithId, session: AsyncSession):
-        book_to_update = await self.get_book(book.id, session)
+    async def update_book(
+        self, book_id: UUID, book: UpdateBookSchema, session: AsyncSession
+    ):
+        book_to_update = await self.get_book(book_id, session)
 
         if book_to_update is None:
             return None
 
-        data = book.model_dump()
+        data = book.model_dump(exclude_unset=True)
 
         for key, value in data.items():
             setattr(book_to_update, key, value)
