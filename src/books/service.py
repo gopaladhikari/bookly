@@ -3,6 +3,7 @@ from .schema import CreateBookSchema, UpdateBookSchema
 from uuid import UUID
 from sqlmodel import select, desc
 from .models import Book
+from datetime import datetime
 
 
 class BookService:
@@ -29,6 +30,8 @@ class BookService:
         data = book.model_dump()
 
         new_book = Book(**data)
+
+        new_book.published_date = datetime.strptime(data["published_date"], "%Y-%m-%d")
 
         session.add(new_book)
 
