@@ -1,36 +1,63 @@
-# Bookly API
+# 📚 Bookly API
 
-**Bookly** is a robust REST API service built with _FastAPI_ to manage book reviews. This project serves as an advanced implementation of API development practices, covering production-ready features beyond basic CRUD operations.
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
+[![PostgreSQL](https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 
-## Key Features
+**Bookly** is a robust, production-ready REST API service designed for managing book reviews. Built with performance and scalability in mind, this project serves as an advanced implementation of modern API development, moving beyond basic CRUD operations to include asynchronous processing, secure authentication, and rigorous testing.
 
-- **RESTful CRUD API**: Full management of book and review resources.
-- **User Authentication**: Secure user management featuring _JWT_ authentication, password hashing with _passlib_, and role-based access control (RBAC).
-- **Database Management**: Utilizes _SQLModel_ and _PostgreSQL_ for data persistence with asynchronous sessions and _Alembic_ for database migrations.
-- **Background Tasks**: Offloads intensive tasks (such as sending verification emails) using _Celery_ and _Redis_.
-- **API Documentation**: Interactive documentation automatically generated via _SwaggerUI_ and _ReDoc_.
-- **Testing**: Comprehensive testing suite using _Pytest_ for unit testing and _Schemathesis_ for document-driven testing.
+## ✨ Key Features
 
-## Tech Stack
+- **RESTful CRUD API**: Comprehensive endpoints for managing users, books, and reviews.
+- **Secure Authentication**: JWT-based user authentication, password hashing with `passlib` and `bcrypt`, and Role-Based Access Control (RBAC).
+- **Asynchronous Database Engine**: High-performance data persistence utilizing **SQLModel** and **PostgreSQL** with async sessions.
+- **Automated Migrations**: Schema version control managed seamlessly via **Alembic**.
+- **Background Task Processing**: Offloads CPU-intensive tasks (e.g., sending verification emails) using **Celery** workers and a **Redis** message broker.
+- **Interactive API Documentation**: Auto-generated Swagger UI and ReDoc interfaces.
+- **Comprehensive Testing**: Rigorous unit tests written in **Pytest** and property-based API testing via **Schemathesis**.
 
-- **Framework**: _FastAPI_
-- **ORM**: _SQLModel_
-- **Database**: _PostgreSQL_
-- **Migration Tool**: _Alembic_
-- **Task Queue**: _Celery_ with _Redis_
-- **Security**: _PyJWT_, _passlib_
+---
 
-## Getting Started
+## 🛠️ Tech Stack
 
-1.  **Clone the repository**: `git clone <your-repository-url>`
-2.  **Install dependencies**: `pip install -r requirements.txt`
-3.  **Setup Environment**: Configure your `.env` file with database and Redis connection strings.
-4.  **Run Migrations**: `alembic upgrade head`
-5.  **Start the Server**: `fastapi dev source/main.py`
+### Core
 
-## Documentation
+- **Web Framework**: FastAPI
+- **ASGI Server**: Uvicorn
+- **Language**: Python 3.10+
 
-Once the server is running, you can access the interactive API documentation at:
+### Database & ORM
 
-- **SwaggerUI**: `/docs`
-- **ReDoc**: `/redoc`
+- **Database**: PostgreSQL (Neon)
+- **ORM**: SQLModel (powered by SQLAlchemy)
+- **Migrations**: Alembic
+
+### Background Tasks & Caching
+
+- **Task Queue**: Celery
+- **Broker/Cache**: Redis
+
+### Security & Testing
+
+- **Auth**: PyJWT, Passlib (Bcrypt)
+- **Testing**: Pytest, Schemathesis
+
+---
+
+## 🚀 Getting Started
+
+Follow these instructions to set up the project locally for development and testing.
+
+### Prerequisites
+
+- Python 3.10 or higher
+- PostgreSQL installed and running (or a cloud DB like Neon)
+- Redis server installed and running
+
+### 1. Clone the repository
+
+```bash
+git clone [https://github.com/gopaladhikari/bookly.git](https://github.com/gopaladhikari/bookly.git)
+cd bookly
+```
