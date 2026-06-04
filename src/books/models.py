@@ -1,7 +1,7 @@
 from sqlmodel import Field, SQLModel, Column, func
 import sqlalchemy.dialects.postgresql as pg
 from datetime import datetime, timezone
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 
 def now():
@@ -11,7 +11,7 @@ def now():
 class Book(SQLModel, table=True):
     __tablename__ = "books"  # type: ignore
 
-    id: pg.UUID = Field(
+    id: UUID = Field(
         sa_column=Column(
             pg.UUID(as_uuid=True), nullable=False, primary_key=True, default=uuid4
         )
