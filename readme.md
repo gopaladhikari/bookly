@@ -58,6 +58,7 @@ Follow these instructions to set up the project locally for development and test
 ### 1. Clone the repository
 
 ```bash
-git clone [https://github.com/gopaladhikari/bookly.git](https://github.com/gopaladhikari/bookly.git)
+git clone https://github.com/gopaladhikari/bookly
+
 cd bookly
 ```
