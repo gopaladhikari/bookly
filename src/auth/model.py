@@ -1,39 +1,41 @@
-from sqlmodel import SQLModel, Column, Field, func
+from sqlmodel import SQLModel, Field, func
+from typing import Optional
 from uuid import uuid4, UUID
 from datetime import datetime, timezone
-import sqlalchemy.dialects.postgresql as pg
 
 
-def now():
+def now() -> datetime:
     return datetime.now(timezone.utc)
 
 
 class User(SQLModel, table=True):
     __tablename__ = "users"  # type: ignore
 
-    id: UUID = Field(
-        sa_column=Column(
-            pg.UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4
-        )
-    )
+    id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)
 
-    username: str
-    email: str
-    first_name: str
-    last_name: str
+    username: str = Field(index=True, nullable=False)
+
+    email: str = Field(index=True, nullable=False, unique=True)
+
+    first_name: Optional[str] = Field(default=None)
+
+    last_name: Optional[str] = Field(default=None)
+
     password: str = Field(exclude=True)
+
     is_verified: bool = False
+
     created_at: datetime = Field(
-        sa_column=Column(pg.TIMESTAMP(timezone=True), default=now, nullable=False)
-    )
-    updated_at: datetime = Field(
-        sa_column=Column(
-            pg.TIMESTAMP(timezone=True),
-            default=now,
-            onupdate=func.now,
-            nullable=False,
-        )
+        default_factory=now, sa_column_kwargs={"server_default": "CURRENT_TIMESTAMP"}
     )
 
-    def __repr__(self):
+    updated_at: datetime = Field(
+        default_factory=now,
+        sa_column_kwargs={
+            "server_default": func.now(),
+            "onupdate": func.now(),
+        },
+    )
+
+    def __repr__(self) -> str:
         return f"<User {self.username}>"

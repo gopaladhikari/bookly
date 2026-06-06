@@ -16,3 +16,8 @@ class RegisterSchema(BaseModel):
 class LoginSchema(BaseModel):
     username: ValidUsername
     password: ValidPassword
+
+
+class ResetPassword(BaseModel):
+    new_password: ValidPassword
+    confirm_new_password: ValidPassword
