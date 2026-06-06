@@ -3,7 +3,7 @@ from .model import User
 from uuid import UUID
 from .schema import RegisterSchema, LoginSchema, ResetPassword
 from pydantic import EmailStr
-from sqlmodel import select
+from sqlmodel import select, or_
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -11,6 +11,22 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class AuthService:
     async def register_user(self, user: RegisterSchema, session: AsyncSession):
+        # Check if user already exists
+        statement = select(User).where(
+            or_(User.email == user.email, User.username == user.username)
+        )
+
+        result = await session.exec(statement)
+
+        existing_user = result.first()
+
+        if existing_user:
+            if existing_user.email == user.email:
+                raise ValueError("A user with this email already exists.")
+
+            raise ValueError("This username is already taken.")
+
+        # Create a new user
         plain_password = user.password.get_secret_value()
 
         hashed_password = pwd_context.hash(plain_password)

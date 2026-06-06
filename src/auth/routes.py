@@ -16,4 +16,10 @@ async def login(user: LoginSchema, session: AsyncSession = Depends(get_session))
 
 @auth_router.post("/register", status_code=status.HTTP_200_OK)
 async def register(user: RegisterSchema, session: AsyncSession = Depends(get_session)):
-    pass
+    try:
+        new_user = await auth_service.register_user(user, session)
+
+        return new_user
+
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
