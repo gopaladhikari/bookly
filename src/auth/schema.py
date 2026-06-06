@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field, EmailStr, SecretStr
-from typing import Optional, Annotated
+from typing import Annotated
+from uuid import UUID
+from datetime import datetime
 
 ValidUsername = Annotated[str, Field(min_length=3, max_length=20)]
 
@@ -21,3 +23,11 @@ class LoginSchema(BaseModel):
 class ResetPassword(BaseModel):
     new_password: ValidPassword
     confirm_new_password: ValidPassword
+
+
+class UserResponseDto(BaseModel):
+    id: UUID
+    username: str
+    email: str
+    is_verified: bool
+    created_at: datetime
