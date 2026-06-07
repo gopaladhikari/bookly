@@ -27,6 +27,8 @@ class ResetPassword(BaseModel):
 
 class UserResponseDto(BaseModel):
     id: UUID
+    first_name: str
+    last_name: str
     username: str
     email: str
     is_verified: bool
