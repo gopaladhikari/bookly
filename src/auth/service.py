@@ -4,9 +4,7 @@ from uuid import UUID
 from .schema import RegisterSchema, LoginSchema, ResetPassword
 from pydantic import EmailStr
 from sqlmodel import select, or_
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from .utils import hash_password, verify_password, create_jwt_token
 
 
 class AuthService:
@@ -29,7 +27,7 @@ class AuthService:
         # Create a new user
         plain_password = user.password.get_secret_value()
 
-        hashed_password = pwd_context.hash(plain_password)
+        hashed_password = hash_password(plain_password)
 
         new_user = User(
             username=user.username,
@@ -46,7 +44,29 @@ class AuthService:
         return new_user
 
     async def login_user(self, user: LoginSchema, session: AsyncSession):
-        pass
+        statement = select(User).where(User.email == user.email)
+
+        result = await session.exec(statement)
+
+        existing_user = result.first()
+
+        if existing_user is None:
+            raise ValueError("Invalid email or password.")
+
+        is_password_correct = verify_password(existing_user.password, user.password)
+
+        if not is_password_correct:
+            raise ValueError("Invalid email or password.")
+
+        access_token = create_jwt_token(existing_user.id)
+
+        refresh_token = create_jwt_token(existing_user.id, True)
+
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "user": existing_user,
+        }
 
     async def verify_email(
         self,

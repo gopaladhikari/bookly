@@ -5,6 +5,8 @@ import jwt
 from typing import Optional
 import logging
 from uuid import UUID, uuid4
+from .schema import ValidPassword
+from uuid import UUID
 
 passwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -13,22 +15,23 @@ def hash_password(password: str) -> str:
     return passwd_context.hash(password)
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return passwd_context.verify(plain_password, hashed_password)
+def verify_password(plain_password: str, hashed_password: ValidPassword) -> bool:
+
+    return passwd_context.verify(plain_password, str(hashed_password))
 
 
-def create_jwt_token(data: dict, is_refresh_token: bool = False) -> str:
+def create_jwt_token(user_id: UUID, is_refresh_token: bool = False) -> str:
 
     now = datetime.now(timezone.utc)
 
-    expiry_minutes = 30 if not is_refresh_token else 43200
+    expiry_minutes = 43200 if is_refresh_token else 30
 
     expiry_time = now + timedelta(minutes=expiry_minutes)
 
     payload = {
         "exp": int(expiry_time.timestamp()),
         "iat": int(now.timestamp()),
-        "sub": data.get("user_id") or data,
+        "sub": str(user_id),
         "jti": str(uuid4()),
         "refresh": is_refresh_token,
     }
@@ -53,9 +56,7 @@ def decode_jwt_token(token: str) -> Optional[dict]:
 
         return payload
     except jwt.ExpiredSignatureError:
-        logging.exception("Expired signature error")
-        return None
+        raise ValueError("Jwt token is expired")
 
     except jwt.InvalidTokenError:
-        logging.exception("Invalid token error")
-        return None
+        raise ValueError("Jwt token is invalid.")
