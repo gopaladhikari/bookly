@@ -53,7 +53,9 @@ class AuthService:
         if existing_user is None:
             raise ValueError("Invalid email or password.")
 
-        is_password_correct = verify_password(existing_user.password, user.password)
+        is_password_correct = verify_password(
+            existing_user.password, user.password.get_secret_value()
+        )
 
         if not is_password_correct:
             raise ValueError("Invalid email or password.")

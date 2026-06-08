@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Response
 from sqlmodel.ext.asyncio.session import AsyncSession
 from .service import AuthService
 from src.core.database import get_session
 from .schema import RegisterSchema, LoginSchema
-from .dto import UserRegisterDto, UserLoginDto
+from .dto import UserDto, UserLoginDto
 from fastapi.responses import JSONResponse
 
 auth_service = AuthService()
@@ -12,9 +12,29 @@ auth_router = APIRouter()
 
 
 @auth_router.post("/login", status_code=status.HTTP_200_OK, response_model=UserLoginDto)
-async def login(user: LoginSchema, session: AsyncSession = Depends(get_session)):
+async def login(
+    user: LoginSchema, response: Response, session: AsyncSession = Depends(get_session)
+):
     try:
         user_details = await auth_service.login_user(user, session)
+
+        response.set_cookie(
+            key="access_token",
+            value=user_details["access_token"],
+            httponly=True,
+            max_age=30 * 60,
+            samesite="lax",
+            secure=True,
+        )
+
+        response.set_cookie(
+            key="refresh_token",
+            value=user_details["refresh_token"],
+            httponly=True,
+            max_age=30 * 24 * 60 * 60,
+            samesite="lax",
+            secure=True,
+        )
 
         return {
             "message": "User logged in successfully.",
@@ -26,7 +46,7 @@ async def login(user: LoginSchema, session: AsyncSession = Depends(get_session))
 
 
 @auth_router.post(
-    "/register", status_code=status.HTTP_201_CREATED, response_model=UserRegisterDto
+    "/register", status_code=status.HTTP_201_CREATED, response_model=UserDto
 )
 async def register(user: RegisterSchema, session: AsyncSession = Depends(get_session)):
     try:

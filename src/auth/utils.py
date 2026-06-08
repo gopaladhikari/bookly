@@ -5,7 +5,6 @@ import jwt
 from typing import Optional
 import logging
 from uuid import UUID, uuid4
-from .schema import ValidPassword
 from uuid import UUID
 
 passwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -15,7 +14,7 @@ def hash_password(password: str) -> str:
     return passwd_context.hash(password)
 
 
-def verify_password(plain_password: str, hashed_password: ValidPassword) -> bool:
+def verify_password(plain_password: str, hashed_password: str) -> bool:
 
     return passwd_context.verify(plain_password, str(hashed_password))
 
