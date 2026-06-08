@@ -3,7 +3,6 @@ from datetime import datetime, timedelta, timezone
 from src.core.config import Config
 import jwt
 from typing import Optional
-import logging
 from uuid import UUID, uuid4
 from uuid import UUID
 

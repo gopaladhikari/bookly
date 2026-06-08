@@ -4,7 +4,6 @@ from .service import AuthService
 from src.core.database import get_session
 from .schema import RegisterSchema, LoginSchema
 from .dto import UserDto, UserLoginDto
-from fastapi.responses import JSONResponse
 
 auth_service = AuthService()
 
