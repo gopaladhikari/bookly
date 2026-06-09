@@ -21,3 +21,11 @@ class LoginSchema(BaseModel):
 class ResetPassword(BaseModel):
     new_password: ValidPassword
     confirm_new_password: ValidPassword
+
+
+class TokenPayload(BaseModel):
+    exp: int
+    iat: int
+    sub: str
+    jti: str
+    refresh: bool

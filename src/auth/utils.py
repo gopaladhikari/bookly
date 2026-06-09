@@ -2,9 +2,10 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from src.core.config import Config
 import jwt
-from typing import Optional
+from typing import Optional, Any
 from uuid import UUID, uuid4
 from uuid import UUID
+from .schema import TokenPayload
 
 passwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -26,16 +27,16 @@ def create_jwt_token(user_id: UUID, is_refresh_token: bool = False) -> str:
 
     expiry_time = now + timedelta(minutes=expiry_minutes)
 
-    payload = {
-        "exp": int(expiry_time.timestamp()),
-        "iat": int(now.timestamp()),
-        "sub": str(user_id),
-        "jti": str(uuid4()),
-        "refresh": is_refresh_token,
-    }
+    payload = TokenPayload(
+        exp=int(expiry_time.timestamp()),
+        iat=int(now.timestamp()),
+        sub=str(user_id),
+        jti=str(uuid4()),
+        refresh=is_refresh_token,
+    )
 
     token = jwt.encode(
-        payload=payload,
+        payload=payload.model_dump(),
         key=Config.JWT_SECRET,
         algorithm="HS256",
         headers={"typ": "JWT"},
@@ -44,7 +45,7 @@ def create_jwt_token(user_id: UUID, is_refresh_token: bool = False) -> str:
     return token
 
 
-def decode_jwt_token(token: str) -> Optional[dict]:
+def decode_jwt_token(token: str) -> TokenPayload:
     try:
         payload = jwt.decode(
             jwt=token,
@@ -52,7 +53,8 @@ def decode_jwt_token(token: str) -> Optional[dict]:
             algorithms=["HS256"],
         )
 
-        return payload
+        return TokenPayload(**payload)
+
     except jwt.ExpiredSignatureError:
         raise ValueError("Jwt token is expired")
 
