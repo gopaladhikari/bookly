@@ -31,8 +31,6 @@ class BookService:
 
         new_book = Book(**data)
 
-        new_book.published_date = datetime.strptime(data["published_date"], "%Y-%m-%d")
-
         session.add(new_book)
 
         await session.commit()

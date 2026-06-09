@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import date
 
 
 class CreateBookSchema(BaseModel):
@@ -8,7 +8,7 @@ class CreateBookSchema(BaseModel):
     author: str
     description: str
     publisher: str
-    published_date: datetime
+    published_date: date
     page_count: int
     language: str
 
@@ -18,6 +18,6 @@ class UpdateBookSchema(BaseModel):
     author: Optional[str] = None
     description: Optional[str] = None
     publisher: Optional[str] = None
-    published_date: Optional[datetime] = None
+    published_date: Optional[date] = None
     page_count: Optional[int] = None
     language: Optional[str] = None

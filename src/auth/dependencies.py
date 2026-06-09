@@ -10,13 +10,28 @@ class JWTBearer(HTTPBearer):
         super().__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request) -> TokenPayload | None:  # type: ignore[override]
-        credentials = await super().__call__(request)
 
-        if credentials is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        token = request.cookies.get("access_token")
+
+        if not token:
+            try:
+                credentials = await super().__call__(request)
+                if credentials:
+                    token = credentials.credentials
+            except HTTPException:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Not authenticated. Please log in.",
+                )
+
+        if not token:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not authenticated. Please log in.",
+            )
 
         try:
-            token = decode_jwt_token(credentials.credentials)
+            token = decode_jwt_token(token)
 
             if token.refresh:
                 raise HTTPException(
