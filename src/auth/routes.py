@@ -4,13 +4,15 @@ from .service import AuthService
 from src.core.database import get_session
 from .schema import RegisterSchema, LoginSchema, TokenPayload
 from .dto import UserDto, UserLoginDto
-from .dependencies import AccessTokenBearer
+from .dependencies import AccessTokenBearer, RefreshTokenBearer
 
 auth_service = AuthService()
 
 auth_router = APIRouter()
 
 access_token_bearer = AccessTokenBearer()
+
+refresh_token_bearer = RefreshTokenBearer()
 
 
 @auth_router.post("/login", status_code=status.HTTP_200_OK, response_model=UserLoginDto)
@@ -86,7 +88,7 @@ async def get_current_user(
 )
 async def refresh_access_token(
     response: Response,
-    token_details: TokenPayload = Depends(access_token_bearer),
+    token_details: TokenPayload = Depends(refresh_token_bearer),
     session: AsyncSession = Depends(get_session),
 ):
     try:
