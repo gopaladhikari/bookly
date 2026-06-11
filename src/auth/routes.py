@@ -2,12 +2,15 @@ from fastapi import APIRouter, Depends, status, HTTPException, Response
 from sqlmodel.ext.asyncio.session import AsyncSession
 from .service import AuthService
 from src.core.database import get_session
-from .schema import RegisterSchema, LoginSchema
+from .schema import RegisterSchema, LoginSchema, TokenPayload
 from .dto import UserDto, UserLoginDto
+from .dependencies import JWTBearer
 
 auth_service = AuthService()
 
 auth_router = APIRouter()
+
+jwt_bearer = JWTBearer()
 
 
 @auth_router.post("/login", status_code=status.HTTP_200_OK, response_model=UserLoginDto)
@@ -55,3 +58,21 @@ async def register(user: RegisterSchema, session: AsyncSession = Depends(get_ses
 
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+
+
+@auth_router.get(
+    "/me",
+    status_code=status.HTTP_200_OK,
+    response_model=UserDto,
+)
+async def get_current_user(
+    session: AsyncSession = Depends(get_session),
+    token_details: TokenPayload = Depends(jwt_bearer),
+):
+    try:
+        user = await auth_service.get_current_user(token_details.sub, session)
+
+        return {"message": "User retrieved successfully.", **user.model_dump()}
+
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))

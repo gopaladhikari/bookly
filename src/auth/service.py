@@ -75,15 +75,15 @@ class AuthService:
     ):
         pass
 
-    async def get_current_user(self, email: EmailStr, session: AsyncSession):
-        statement = select(User).where(User.email == email)
+    async def get_current_user(self, id: str, session: AsyncSession):
+        statement = select(User).where(User.id == id)
 
         result = await session.exec(statement)
 
         user = result.first()
 
         if user is None:
-            return None
+            raise ValueError("User not found.")
 
         return user
 

@@ -31,15 +31,15 @@ class JWTBearer(HTTPBearer):
             )
 
         try:
-            token = decode_jwt_token(token)
+            decoded_jwt = decode_jwt_token(token)
 
-            if token.refresh:
+            if decoded_jwt.refresh:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Please provide a valid access token",
                 )
 
-            return token
+            return decoded_jwt
 
         except ValueError as e:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
