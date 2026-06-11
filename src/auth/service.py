@@ -93,5 +93,22 @@ class AuthService:
     async def reset_password(self, jwt_token: str, passwords: ResetPassword):
         pass
 
-    async def refreshAccessToken(self, access_token: str):
-        pass
+    async def refreshAccessToken(self, id: str, session: AsyncSession):
+        statement = select(User).where(User.id == id)
+
+        result = await session.exec(statement)
+
+        user = result.first()
+
+        if user is None:
+            raise ValueError("User not found.")
+
+        access_token = create_jwt_token(user.id)
+
+        refresh_token = create_jwt_token(user.id, True)
+
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "user": user,
+        }
