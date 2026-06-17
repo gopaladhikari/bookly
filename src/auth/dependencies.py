@@ -3,6 +3,7 @@ from fastapi import Request, status
 from .utils import decode_jwt_token
 from fastapi.exceptions import HTTPException
 from .schema import TokenPayload
+from src.core.redis import token_in_blocklist
 
 
 class AccessTokenBearer(HTTPBearer):
@@ -33,6 +34,12 @@ class AccessTokenBearer(HTTPBearer):
         try:
             decoded_jwt = decode_jwt_token(token)
 
+            if await token_in_blocklist(decoded_jwt.jti):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token has been revoked/logged out. Please log in again.",
+                )
+
             if decoded_jwt.refresh:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -58,6 +65,7 @@ class RefreshTokenBearer(HTTPBearer):
                 credentials = await super().__call__(request)
                 if credentials:
                     token = credentials.credentials
+
             except HTTPException:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -68,6 +76,12 @@ class RefreshTokenBearer(HTTPBearer):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Not authenticated. Please log in.",
+            )
+
+        if await token_in_blocklist(token):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token has been blocked",
             )
 
         try:

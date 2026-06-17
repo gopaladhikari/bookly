@@ -2,9 +2,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from src.core.config import Config
 import jwt
-from typing import Optional, Any
 from uuid import UUID, uuid4
-from uuid import UUID
 from .schema import TokenPayload
 
 passwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

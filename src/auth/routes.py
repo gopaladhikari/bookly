@@ -5,6 +5,7 @@ from src.core.database import get_session
 from .schema import RegisterSchema, LoginSchema, TokenPayload
 from .dto import UserDto, UserLoginDto
 from .dependencies import AccessTokenBearer, RefreshTokenBearer
+from src.core.redis import add_jti_to_blocklist
 
 auth_service = AuthService()
 
@@ -116,6 +117,26 @@ async def refresh_access_token(
             "message": "Access token refreshed successfully.",
             **user_details,
         }
+
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
+
+
+@auth_router.post("/logout", status_code=status.HTTP_200_OK)
+async def logout(
+    response: Response,
+    token_details: TokenPayload = Depends(access_token_bearer),
+    session: AsyncSession = Depends(get_session),
+):
+    try:
+        jti = token_details.jti
+
+        await add_jti_to_blocklist(jti)
+
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+
+        return {"message": "User logged out successfully."}
 
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
