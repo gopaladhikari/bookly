@@ -1,7 +1,9 @@
+aioredis==2.0.1
 alembic==1.18.4
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.13.0
+async-timeout==5.0.1
 asyncpg==0.31.0
 click==8.4.1
 colorama==0.4.6
