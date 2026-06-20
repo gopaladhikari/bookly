@@ -1,7 +1,13 @@
-from sqlmodel import SQLModel, Field, func
+from sqlmodel import SQLModel, Field, func, Column, String
 from typing import Optional
 from uuid import uuid4, UUID
 from datetime import datetime, timezone
+from enum import Enum
+
+
+class Role(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
 
 
 def now() -> datetime:
@@ -20,6 +26,11 @@ class User(SQLModel, table=True):
     first_name: Optional[str] = Field(default=None)
 
     last_name: Optional[str] = Field(default=None)
+
+    role: Role = Field(
+        default=Role.USER,
+        sa_column=Column(String, server_default=Role.USER, nullable=False),
+    )
 
     password: str = Field(exclude=True)
 
