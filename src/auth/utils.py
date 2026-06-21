@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from src.core.config import Config
 import jwt
 from uuid import UUID, uuid4
-from .schema import TokenPayload
+from .schema import TokenPayload, Role
 
 passwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -17,7 +17,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return passwd_context.verify(plain_password, str(hashed_password))
 
 
-def create_jwt_token(user_id: UUID, is_refresh_token: bool = False) -> str:
+def create_jwt_token(user_id: UUID, role: Role, is_refresh_token: bool = False) -> str:
 
     now = datetime.now(timezone.utc)
 
@@ -31,6 +31,7 @@ def create_jwt_token(user_id: UUID, is_refresh_token: bool = False) -> str:
         sub=str(user_id),
         jti=str(uuid4()),
         refresh=is_refresh_token,
+        role=role,
     )
 
     token = jwt.encode(

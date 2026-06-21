@@ -59,9 +59,9 @@ class AuthService:
         if not is_password_correct:
             raise ValueError("Invalid email or password.")
 
-        access_token = create_jwt_token(existing_user.id)
+        access_token = create_jwt_token(existing_user.id, existing_user.role)
 
-        refresh_token = create_jwt_token(existing_user.id, True)
+        refresh_token = create_jwt_token(existing_user.id, existing_user.role, True)
 
         return {
             "access_token": access_token,
@@ -103,9 +103,9 @@ class AuthService:
         if user is None:
             raise ValueError("User not found.")
 
-        access_token = create_jwt_token(user.id)
+        access_token = create_jwt_token(user.id, user.role)
 
-        refresh_token = create_jwt_token(user.id, True)
+        refresh_token = create_jwt_token(user.id, user.role, True)
 
         return {
             "access_token": access_token,

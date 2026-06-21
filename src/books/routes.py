@@ -6,14 +6,14 @@ from .schema import CreateBookSchema, UpdateBookSchema
 from uuid import UUID
 from typing import List
 from .models import Book
-from src.auth.dependencies import JWTBearer
-from src.auth.schema import TokenPayload
+from src.auth.dependencies import AdminChecker
 
 book_router = APIRouter()
 
 book_service = BookService()
 
-jwt_bearer = JWTBearer()
+
+admin_checker = AdminChecker()
 
 
 @book_router.get("/", response_model=List[Book])
@@ -39,7 +39,7 @@ async def get_book(book_id: UUID, session: AsyncSession = Depends(get_session)):
 async def create_book(
     book: CreateBookSchema,
     session: AsyncSession = Depends(get_session),
-    jwt: TokenPayload = Depends(jwt_bearer),
+    _: AdminChecker = Depends(admin_checker),
 ):
     new_book = await book_service.create_book(book, session)
     return new_book
@@ -50,7 +50,7 @@ async def update_book(
     book_id: UUID,
     book: UpdateBookSchema,
     session: AsyncSession = Depends(get_session),
-    jwt: TokenPayload = Depends(jwt_bearer),
+    _: AdminChecker = Depends(admin_checker),
 ):
     updated_book = await book_service.update_book(book_id, book, session)
 
@@ -70,7 +70,7 @@ async def update_book(
 async def delete_book(
     book_id: UUID,
     session: AsyncSession = Depends(get_session),
-    jwt: TokenPayload = Depends(jwt_bearer),
+    _: AdminChecker = Depends(admin_checker),
 ):
     deleted_book = await book_service.delete_book(book_id, session)
 

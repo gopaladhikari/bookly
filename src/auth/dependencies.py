@@ -1,8 +1,8 @@
 from fastapi.security import HTTPBearer
-from fastapi import Request, status
+from fastapi import Request, status, Depends
 from .utils import decode_jwt_token
 from fastapi.exceptions import HTTPException
-from .schema import TokenPayload
+from .schema import TokenPayload, Role
 from src.core.redis import token_in_blocklist
 
 
@@ -87,6 +87,12 @@ class RefreshTokenBearer(HTTPBearer):
         try:
             decoded_jwt = decode_jwt_token(token)
 
+            if await token_in_blocklist(decoded_jwt.jti):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token has been revoked/logged out. Please log in again.",
+                )
+
             if not decoded_jwt.refresh:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -97,3 +103,15 @@ class RefreshTokenBearer(HTTPBearer):
 
         except ValueError as e:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
+
+
+class AdminChecker:
+    async def __call__(
+        self, access_token: TokenPayload = Depends(AccessTokenBearer())
+    ) -> TokenPayload:
+        if access_token.role != Role.ADMIN:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to access this resource.",
+            )
+        return access_token

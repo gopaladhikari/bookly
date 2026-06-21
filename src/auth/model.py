@@ -2,12 +2,7 @@ from sqlmodel import SQLModel, Field, func, Column, String
 from typing import Optional
 from uuid import uuid4, UUID
 from datetime import datetime, timezone
-from enum import Enum
-
-
-class Role(str, Enum):
-    USER = "user"
-    ADMIN = "admin"
+from .schema import Role
 
 
 def now() -> datetime:

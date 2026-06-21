@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, EmailStr, SecretStr
 from typing import Annotated
+from enum import Enum
 
 ValidUsername = Annotated[str, Field(min_length=3, max_length=20)]
 
@@ -23,9 +24,15 @@ class ResetPassword(BaseModel):
     confirm_new_password: ValidPassword
 
 
+class Role(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
+
+
 class TokenPayload(BaseModel):
     exp: int
     iat: int
     sub: str
     jti: str
+    role: Role
     refresh: bool
