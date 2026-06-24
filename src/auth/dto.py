@@ -2,6 +2,8 @@ from uuid import UUID
 from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
+from src.books.dto import BookDto
+from typing import List
 
 
 class UserDto(BaseModel):
@@ -13,6 +15,7 @@ class UserDto(BaseModel):
     email: str
     is_verified: bool
     created_at: datetime
+    books = List[BookDto]
 
 
 class UserLoginDto(BaseModel):
