@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, EmailStr, SecretStr
 from typing import Annotated
 from enum import Enum
+from uuid import UUID
 
 ValidUsername = Annotated[str, Field(min_length=3, max_length=20)]
 
@@ -32,7 +33,7 @@ class Role(str, Enum):
 class TokenPayload(BaseModel):
     exp: int
     iat: int
-    sub: str
+    sub: UUID
     jti: str
     role: Role
     refresh: bool

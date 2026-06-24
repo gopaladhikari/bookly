@@ -3,7 +3,6 @@ from .schema import CreateBookSchema, UpdateBookSchema
 from uuid import UUID
 from sqlmodel import select, desc
 from .models import Book
-from datetime import datetime
 
 
 class BookService:
@@ -26,10 +25,14 @@ class BookService:
 
         return first_book
 
-    async def create_book(self, book: CreateBookSchema, session: AsyncSession):
+    async def create_book(
+        self, book: CreateBookSchema, session: AsyncSession, user_id: UUID
+    ):
         data = book.model_dump()
 
         new_book = Book(**data)
+
+        new_book.user_id = user_id
 
         session.add(new_book)
 

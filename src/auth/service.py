@@ -4,6 +4,7 @@ from .schema import RegisterSchema, LoginSchema, ResetPassword
 from pydantic import EmailStr
 from sqlmodel import select, or_
 from .utils import hash_password, verify_password, create_jwt_token
+from uuid import UUID
 
 
 class AuthService:
@@ -75,7 +76,7 @@ class AuthService:
     ):
         pass
 
-    async def get_current_user(self, id: str, session: AsyncSession):
+    async def get_current_user(self, id: UUID, session: AsyncSession):
         statement = select(User).where(User.id == id)
 
         result = await session.exec(statement)
@@ -93,7 +94,7 @@ class AuthService:
     async def reset_password(self, jwt_token: str, passwords: ResetPassword):
         pass
 
-    async def refreshAccessToken(self, id: str, session: AsyncSession):
+    async def refreshAccessToken(self, id: UUID, session: AsyncSession):
         statement = select(User).where(User.id == id)
 
         result = await session.exec(statement)

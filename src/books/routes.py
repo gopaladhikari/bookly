@@ -6,12 +6,11 @@ from .schema import CreateBookSchema, UpdateBookSchema
 from uuid import UUID
 from typing import List
 from .models import Book
-from src.auth.dependencies import AdminChecker
+from src.auth.dependencies import AdminChecker, TokenPayload
 
 book_router = APIRouter()
 
 book_service = BookService()
-
 
 admin_checker = AdminChecker()
 
@@ -39,9 +38,10 @@ async def get_book(book_id: UUID, session: AsyncSession = Depends(get_session)):
 async def create_book(
     book: CreateBookSchema,
     session: AsyncSession = Depends(get_session),
-    _: AdminChecker = Depends(admin_checker),
+    token_details: TokenPayload = Depends(admin_checker),
 ):
-    new_book = await book_service.create_book(book, session)
+    user_id = token_details.sub
+    new_book = await book_service.create_book(book, session, user_id)
     return new_book
 
 

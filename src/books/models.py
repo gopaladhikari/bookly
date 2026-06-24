@@ -12,6 +12,8 @@ class Book(SQLModel, table=True):
 
     id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)
 
+    user_id: UUID = Field(foreign_key="users.id")
+
     title: str
 
     author: str

@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
 
 
 class DatabaseSettings(BaseSettings):
@@ -11,4 +10,4 @@ class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
-Config = DatabaseSettings()  # pyright: ignore [reportArgumentType]
+Config = DatabaseSettings()
