@@ -1,8 +1,10 @@
-from sqlmodel import SQLModel, Field, func, Column, String
+from sqlmodel import SQLModel, Field, func, Column, String, Relationship
 from typing import Optional
 from uuid import uuid4, UUID
 from datetime import datetime, timezone
 from .schema import Role
+from src.books.models import Book
+from typing import Optional
 
 
 def now() -> datetime:
@@ -41,6 +43,10 @@ class User(SQLModel, table=True):
             "server_default": func.now(),
             "onupdate": func.now(),
         },
+    )
+
+    books: Optional[list[Book]] = Relationship(
+        back_populates="user", sa_relationship_kwargs={"lazy": "selectin"}
     )
 
     def __repr__(self) -> str:
