@@ -15,6 +15,9 @@ class UserDto(BaseModel):
     email: str
     is_verified: bool
     created_at: datetime
+
+
+class UserBookDto(UserDto):
     books = List[BookDto]
 
 

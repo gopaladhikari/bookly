@@ -3,7 +3,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from .service import AuthService
 from src.core.database import get_session
 from .schema import RegisterSchema, LoginSchema, TokenPayload
-from .dto import UserDto, UserLoginDto
+from .dto import UserDto, UserLoginDto, UserBookDto
 from .dependencies import AccessTokenBearer, RefreshTokenBearer
 from src.core.redis import add_jti_to_blocklist
 
@@ -66,7 +66,7 @@ async def register(user: RegisterSchema, session: AsyncSession = Depends(get_ses
 @auth_router.get(
     "/me",
     status_code=status.HTTP_200_OK,
-    response_model=UserDto,
+    response_model=UserBookDto,
 )
 async def get_current_user(
     session: AsyncSession = Depends(get_session),
