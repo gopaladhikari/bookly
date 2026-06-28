@@ -3,10 +3,11 @@ from typing import Optional
 from uuid import uuid4, UUID
 from datetime import datetime, timezone
 from .schema import Role
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.books.models import Book
+    from src.reviews.models import Review
 
 
 def now() -> datetime:
@@ -47,7 +48,11 @@ class User(SQLModel, table=True):
         },
     )
 
-    books: Optional[list["Book"]] = Relationship(
+    books: List["Book"] = Relationship(
+        back_populates="user", sa_relationship_kwargs={"lazy": "selectin"}
+    )
+
+    reviews: List["Review"] = Relationship(
         back_populates="user", sa_relationship_kwargs={"lazy": "selectin"}
     )
 
