@@ -1,5 +1,5 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
-from .model import User
+from .models import User
 from .schema import RegisterSchema, LoginSchema, ResetPassword
 from pydantic import EmailStr
 from sqlmodel import select, or_

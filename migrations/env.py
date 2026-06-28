@@ -8,8 +8,9 @@ from src.core.config import Config
 
 from alembic import context
 
-from src.auth.model import User
+from src.auth.models import User
 from src.books.models import Book
+from src.reviews.models import Review
 from sqlmodel import SQLModel
 
 # this is the Alembic Config object, which provides

@@ -1,8 +1,10 @@
 from sqlmodel import Field, SQLModel, func, Relationship
 from datetime import datetime, timezone, date
 from uuid import uuid4, UUID
-from typing import Optional
-from src.auth.model import User
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.auth.models import User
 
 
 def now() -> datetime:
@@ -42,7 +44,7 @@ class Book(SQLModel, table=True):
         },
     )
 
-    user: Optional[User] = Relationship(back_populates="books")
+    user: Optional["User"] = Relationship(back_populates="books")
 
     def __repr__(self):
         return f"<Book {self.title}>"

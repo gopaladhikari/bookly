@@ -3,6 +3,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import SQLModel
 from src.core.config import Config
 from src.books.models import Book
+from src.auth.models import User
+from src.reviews.models import Review
 
 engine = create_async_engine(
     url=Config.DATABASE_URL,
