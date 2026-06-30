@@ -5,6 +5,7 @@ from src.core.database import init_db
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.responses import JSONResponse
 from src.auth.routes import auth_router
+from src.reviews.routes import review_router
 
 
 # lifespan to run before and after the application starts and stops
@@ -41,3 +42,4 @@ async def database_error_handler(request, exc: SQLAlchemyError):
 
 app.include_router(book_router, prefix=f"/api/{version}/books", tags=["Books"])
 app.include_router(auth_router, prefix=f"/api/{version}/auth", tags=["Auth"])
+app.include_router(review_router, prefix=f"/api/{version}/reviews", tags=["Reviews"])
