@@ -18,7 +18,7 @@ class UserDto(BaseModel):
 
 
 class UserBookDto(UserDto):
-    books = List[BookDto]
+    books: List[BookDto]
 
 
 class UserLoginDto(BaseModel):
