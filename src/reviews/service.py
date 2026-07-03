@@ -15,7 +15,16 @@ class ReviewService:
         book = await book_service.get_book(book_id, session)
 
         if book is None:
-            return None
+            raise ValueError("Book does not exist")
+
+        check_statement = select(Review).where(
+            (Review.book_id == book_id) & (Review.user_id == user_id)
+        )
+
+        existing_review = (await session.exec(check_statement)).first()
+
+        if existing_review:
+            raise ValueError("You have already reviewed this book.")
 
         new_review = Review.model_validate(
             review,
@@ -51,7 +60,7 @@ class ReviewService:
         review = review_dict.first()
 
         if review is None:
-            return None
+            raise ValueError("Review does not exist")
 
         await session.delete(review)
 
