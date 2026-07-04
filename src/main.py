@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from src.books.routes import book_router
 from contextlib import asynccontextmanager
-from src.core.database import init_db
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.responses import JSONResponse
 from src.auth.routes import auth_router
@@ -12,7 +11,6 @@ from src.reviews.routes import review_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Starting application...")
-    await init_db()
     yield
     print("Stopping application...")
 

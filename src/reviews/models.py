@@ -1,6 +1,5 @@
 from sqlmodel import Field, Relationship
 from src.core.base_model import BaseModel
-from datetime import datetime, timezone
 from uuid import uuid4, UUID
 from typing import Optional, TYPE_CHECKING
 from sqlalchemy import UniqueConstraint

@@ -1,6 +1,6 @@
 from sqlmodel import Field, Relationship
 from src.core.base_model import BaseModel
-from datetime import datetime, timezone, date
+from datetime import date
 from uuid import uuid4, UUID
 from typing import TYPE_CHECKING, Optional, List
 from src.tags.models import BookTag

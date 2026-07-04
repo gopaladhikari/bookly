@@ -10,4 +10,4 @@ class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
-Config = DatabaseSettings()
+Config = DatabaseSettings()  # type: ignore
