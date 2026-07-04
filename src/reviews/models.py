@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field, Relationship, func
+from sqlmodel import Field, Relationship
+from src.core.base_model import BaseModel
 from datetime import datetime, timezone
 from uuid import uuid4, UUID
 from typing import Optional, TYPE_CHECKING
@@ -9,11 +10,7 @@ if TYPE_CHECKING:
     from src.books.models import Book
 
 
-def now() -> datetime:
-    return datetime.now(timezone.utc)
-
-
-class Review(SQLModel, table=True):
+class Review(BaseModel, table=True):
     __tablename__ = "reviews"  # type: ignore
 
     __table_args__ = (
@@ -29,15 +26,6 @@ class Review(SQLModel, table=True):
     rating: int = Field(ge=1, le=5)
 
     review: Optional[str] = Field(max_length=250)
-
-    created_at: datetime = Field(
-        default_factory=now, sa_column_kwargs={"server_default": func.now()}
-    )
-
-    updated_at: datetime = Field(
-        default_factory=now,
-        sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()},
-    )
 
     book: Optional["Book"] = Relationship(back_populates="reviews")
 

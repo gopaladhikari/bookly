@@ -1,18 +1,17 @@
-from sqlmodel import Field, SQLModel, func, Relationship
+from sqlmodel import Field, Relationship
+from src.core.base_model import BaseModel
 from datetime import datetime, timezone, date
 from uuid import uuid4, UUID
 from typing import TYPE_CHECKING, Optional, List
+from src.tags.models import BookTag
 
 if TYPE_CHECKING:
     from src.auth.models import User
     from src.reviews.models import Review
+    from src.tags.models import Tag
 
 
-def now() -> datetime:
-    return datetime.now(timezone.utc)
-
-
-class Book(SQLModel, table=True):
+class Book(BaseModel, table=True):
     __tablename__ = "books"  # type: ignore
 
     id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)
@@ -33,21 +32,15 @@ class Book(SQLModel, table=True):
 
     language: str = Field(default="English", max_length=10)
 
-    created_at: datetime = Field(
-        default_factory=now, sa_column_kwargs={"server_default": "CURRENT_TIMESTAMP"}
-    )
-
-    updated_at: datetime = Field(
-        default_factory=now,
-        sa_column_kwargs={
-            "server_default": func.now(),
-            "onupdate": func.now(),
-        },
-    )
-
     user: Optional["User"] = Relationship(back_populates="books")
 
     reviews: List["Review"] = Relationship(back_populates="book")
+
+    tags: List["Tag"] = Relationship(
+        back_populates="books",
+        link_model=BookTag,
+        sa_relationship_kwargs={"lazy": "selectin"},
+    )
 
     def __repr__(self):
         return f"<Book {self.title}>"

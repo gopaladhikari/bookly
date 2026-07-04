@@ -11,6 +11,7 @@ from alembic import context
 from src.auth.models import User
 from src.books.models import Book
 from src.reviews.models import Review
+from src.tags.models import Tag, BookTag
 from sqlmodel import SQLModel
 
 # this is the Alembic Config object, which provides

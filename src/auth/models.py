@@ -1,20 +1,18 @@
-from sqlmodel import SQLModel, Field, func, Column, String, Relationship
+from sqlmodel import Field, Relationship
 from typing import Optional
 from uuid import uuid4, UUID
 from datetime import datetime, timezone
 from .schema import Role
 from typing import Optional, List, TYPE_CHECKING
+from src.core.base_model import BaseModel
+from sqlalchemy import text
 
 if TYPE_CHECKING:
     from src.books.models import Book
     from src.reviews.models import Review
 
 
-def now() -> datetime:
-    return datetime.now(timezone.utc)
-
-
-class User(SQLModel, table=True):
+class User(BaseModel, table=True):
     __tablename__ = "users"  # type: ignore
 
     id: UUID = Field(default_factory=uuid4, primary_key=True, nullable=False)
@@ -29,24 +27,12 @@ class User(SQLModel, table=True):
 
     role: Role = Field(
         default=Role.USER,
-        sa_column=Column(String, server_default=Role.USER, nullable=False),
+        sa_column_kwargs={"server_default": text(f"'{Role.USER.value}'")},
     )
 
     password: str = Field(exclude=True)
 
     is_verified: bool = False
-
-    created_at: datetime = Field(
-        default_factory=now, sa_column_kwargs={"server_default": "CURRENT_TIMESTAMP"}
-    )
-
-    updated_at: datetime = Field(
-        default_factory=now,
-        sa_column_kwargs={
-            "server_default": func.now(),
-            "onupdate": func.now(),
-        },
-    )
 
     books: List["Book"] = Relationship(
         back_populates="user", sa_relationship_kwargs={"lazy": "selectin"}

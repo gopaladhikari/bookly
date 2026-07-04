@@ -5,6 +5,7 @@ from src.core.config import Config
 from src.books.models import Book
 from src.auth.models import User
 from src.reviews.models import Review
+from src.tags.models import Tag, BookTag
 
 engine = create_async_engine(
     url=Config.DATABASE_URL,
