@@ -39,7 +39,7 @@ async def create_review_by_book_id(
 @review_router.get("/{book_id}", response_model=list[ReviewDto])
 async def get_reviews_by_book_id(
     book_id: UUID,
-    token_details: TokenPayload = Depends(access_token_bearer),
+    _: TokenPayload = Depends(access_token_bearer),
     session: AsyncSession = Depends(get_session),
 ):
     reviews = await review_service.get_reviews_by_book_id(book_id, session)
