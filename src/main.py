@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from src.auth.routes import auth_router
 from src.reviews.routes import review_router
 from src.tags.routes import tags_router
+from .middlewares import register_middlewares
 
 
 # lifespan to run before and after the application starts and stops
@@ -24,6 +25,8 @@ app = FastAPI(
     version=version,
     lifespan=lifespan,
 )
+
+register_middlewares(app)
 
 
 @app.exception_handler(SQLAlchemyError)
